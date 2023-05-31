@@ -59,19 +59,23 @@
 
     // Düşman pozisyonları
     let enemyPositions = [
-      { x: 5, y: 5 },
-      { x: 10, y: 15 },
-      { x: 17, y: 8 }
+      { x: 5, y: 5, xp: 10 },
+      { x: 10, y: 15, xp: 20 },
+      { x: 17, y: 8, xp: 15 }
     ];
 
     // Mermi pozisyonları
     let bullets = [];
 
-    // Puanlama
-    let score = 0;
-    const scoreDisplay = document.createElement('div');
-    scoreDisplay.innerText = 'Score: 0';
-    document.body.appendChild(scoreDisplay);
+    // Deneyim puanı (XP) ve seviye
+    let xp = 0;
+    let level = 1;
+    const xpDisplay = document.createElement('div');
+    xpDisplay.innerText = 'XP: 0';
+    document.body.appendChild(xpDisplay);
+    const levelDisplay = document.createElement('div');
+    levelDisplay.innerText = 'Level: 1';
+    document.body.appendChild(levelDisplay);
 
     // Oyuncu hareketleri
     document.addEventListener('keydown', (event) => {
@@ -134,8 +138,9 @@
             i--;
             enemy.x = Math.floor(Math.random() * width);
             enemy.y = height - 1;
-            score++;
-            scoreDisplay.innerText = 'Score: ' + score;
+            xp += enemy.xp;
+            xpDisplay.innerText = 'XP: ' + xp;
+            checkLevelUp(); // Seviye atlaması kontrolü
             break;
           }
         }
@@ -151,7 +156,7 @@
 
     // Oyunu bitirme ve tekrar başlatma
     function gameOver() {
-      alert('Oyun bitti! Skorunuz: ' + score);
+      alert('Oyun bitti! Skorunuz: ' + xp);
       resetGame();
     }
 
@@ -160,13 +165,38 @@
       playerX = 0;
       playerY = 0;
       bullets = [];
-      score = 0;
-      scoreDisplay.innerText = 'Score: 0';
+      xp = 0;
+      level = 1;
+      xpDisplay.innerText = 'XP: 0';
+      levelDisplay.innerText = 'Level: 1';
       enemyPositions.forEach((enemy) => {
         enemy.x = Math.floor(Math.random() * width);
         enemy.y = height - 1;
       });
       updateGame();
+    }
+
+    // Seviye atlaması kontrolü
+    function checkLevelUp() {
+      const requiredXp = level * 100; // Her seviye için gereken toplam deneyim puanı
+      if (xp >= requiredXp) {
+        level++;
+        levelDisplay.innerText = 'Level: ' + level;
+        levelUp();
+      }
+    }
+
+    // Seviye atladığında düşmanların deneyim puanını artırma ve yeni düşmanlar ekleme
+    function levelUp() {
+      enemyPositions.forEach((enemy) => {
+        enemy.xp += 10;
+      });
+
+      enemyPositions.push(
+        { x: 3, y: 6, xp: 30 },
+        { x: 15, y: 12, xp: 25 },
+        { x: 9, y: 2, xp: 35 }
+      );
     }
 
     // Oyunu başlatma
