@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Fade2Black Pixel Oyunu Coded By : Shady</title>
+  <style>
+    #game-container {
+      width: 400px;
+      height: 400px;
+      border: 1px solid #000;
+      background-image: url('background.png');
+      background-size: cover;
+      position: relative;
+    }
+
+    .pixel {
+      width: 20px;
+      height: 20px;
+      background-color: #FFF;
+      position: absolute;
+    }
+
+    .bullet {
+      width: 20px;
+      height: 20px;
+      background-image: url('game2.png');
+      background-size: cover;
+      position: absolute;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Shady : Pixel Oyunu</h1>
+
+  <div id="game-container"></div>
+
+  <script>
+    // Oyun alanı boyutları
+    const width = 20;
+    const height = 20;
+
+    // Oyun alanı oluşturma
+    const gameContainer = document.getElementById('game-container');
+
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        const pixel = document.createElement('div');
+        pixel.className = 'pixel';
+        pixel.style.left = j * 20 + 'px';
+        pixel.style.top = i * 20 + 'px';
+        gameContainer.appendChild(pixel);
+      }
+    }
+
+    // Oyuncu pozisyonu
+    let playerX = 0;
+    let playerY = 0;
+
+    // Düşman pozisyonları
+    let enemyPositions = [
+      { x: 5, y: 5 },
+      { x: 10, y: 15 },
+      { x: 17, y: 8 }
+    ];
+
+    // Mermi pozisyonları
+    let bullets = [];
+
+    // Puanlama
+    let score = 0;
+    const scoreDisplay = document.createElement('div');
+    scoreDisplay.innerText = 'Score: 0';
+    document.body.appendChild(scoreDisplay);
+
+    // Oyuncu hareketleri
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowUp' && playerY > 0) {
+        playerY--;
+      } else if (event.key === 'ArrowDown' && playerY < height - 1) {
+        playerY++;
+      } else if (event.key === 'ArrowLeft' && playerX > 0) {
+        playerX--;
+      } else if (event.key === 'ArrowRight' && playerX < width - 1) {
+        playerX++;
+      } else if (event.key === 'k') {
+        fireBullet();
+      }
+
+      updateGame();
+    });
+
+    // Oyunu güncelleme
+    function updateGame() {
+      // Oyuncu pozisyonunu güncelleme
+      const pixels = document.getElementsByClassName('pixel');
+      for (let i = 0; i < pixels.length; i++) {
+        pixels[i].style.backgroundColor = '#FFF';
+      }
+      const playerIndex = playerY * width + playerX;
+      pixels[playerIndex].style.backgroundColor = '#FF0000';
+
+      // Düşmanları kontrol etme
+      for (let i = 0; i < enemyPositions.length; i++) {
+        const enemy = enemyPositions[i];
+        const enemyIndex = enemy.y * width + enemy.x;
+        if (enemy.x === playerX && enemy.y === playerY) {
+          gameOver();
+          return;
+        }
+        pixels[enemyIndex].style.backgroundColor = '#00FF00';
+      }
+
+      // Mermileri güncelleme
+      for (let i = 0; i < bullets.length; i++) {
+        const bullet = bullets[i];
+        bullet.y--;
+        const bulletIndex = bullet.y * width + bullet.x;
+        if (bullet.y >= 0) {
+          pixels[bulletIndex].innerHTML = `<div class="bullet" style="left: ${bullet.x * 20}px; top: ${bullet.y * 20}px;"></div>`;
+        } else {
+          bullets.splice(i, 1);
+          i--;
+        }
+      }
+
+      // Mermi-düşman çarpışmasını kontrol etme
+      for (let i = 0; i < bullets.length; i++) {
+        const bullet = bullets[i];
+        for (let j = 0; j < enemyPositions.length; j++) {
+          const enemy = enemyPositions[j];
+          if (bullet.x === enemy.x && bullet.y === enemy.y) {
+            bullets.splice(i, 1);
+            i--;
+            enemy.x = Math.floor(Math.random() * width);
+            enemy.y = height - 1;
+            score++;
+            scoreDisplay.innerText = 'Score: ' + score;
+            break;
+          }
+        }
+      }
+
+      requestAnimationFrame(updateGame);
+    }
+
+    // Mermi ateşleme
+    function fireBullet() {
+      bullets.push({ x: playerX, y: playerY - 1 });
+    }
+
+    // Oyunu bitirme ve tekrar başlatma
+    function gameOver() {
+      alert('Oyun bitti! Skorunuz: ' + score);
+      resetGame();
+    }
+
+    // Oyunu sıfırlama
+    function resetGame() {
+      playerX = 0;
+      playerY = 0;
+      bullets = [];
+      score = 0;
+      scoreDisplay.innerText = 'Score: 0';
+      enemyPositions.forEach((enemy) => {
+        enemy.x = Math.floor(Math.random() * width);
+        enemy.y = height - 1;
+      });
+      updateGame();
+    }
+
+    // Oyunu başlatma
+    updateGame();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,3 @@
+Selam Ben Shady(Eren) sizlere basit bir Html ile oyun yapmaya çalıştım tek html değil diğer farklı dillerdende bir Pixel oyun yapmaya çalıştım.
+bu oyunu geliştirmeye çalışıyorum ve hergün elimden geldiğince geliştirmeye çaba sarf edeceğim.
+eğer bu projeme katkı sağlamak isterseniz kodları düzenleyebilirsiniz, sizlere open-source vereceğim ve üstüne ek yapabilirsiniz paylaşabilirsiniz yorum atabilirsiniz.
