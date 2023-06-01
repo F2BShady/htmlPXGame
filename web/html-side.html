@@ -4,6 +4,30 @@
 <head>
   <title>Fade2Black Pixel Oyunu Coded By : Shady</title>
   <link rel="stylesheet" href="css-side.css">
+  <style>
+    .level-bar {
+      width: 100%;
+      height: 30px;
+      background-color: #000;
+      position: relative;
+    }
+
+    .level-progress {
+      width: 0;
+      height: 100%;
+      background-color: #00FF00;
+      transition: width 0.5s ease;
+    }
+
+    .level-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #FFF;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
@@ -13,6 +37,11 @@
     <div id="info">
       <div class="score" id="score-display">Score: 0</div>
       <div class="round" id="round-display">Round: 1</div>
+      <div class="level-bar">
+        <div class="level-progress" id="level-progress"></div>
+        <div class="level-text" id="level-text">Level 1</div>
+      </div>
+      <div class="level-up-message" id="level-up-message"></div>
     </div>
   </div>
 
