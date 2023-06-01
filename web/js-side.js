@@ -25,18 +25,15 @@ let enemyPositions = [];
 // Mermi pozisyonları
 let bullets = [];
 
-// Puanlama ve round
+// Puanlama, round ve level
 let score = 0;
 let round = 1;
-const scoreDisplay = document.createElement('div');
-scoreDisplay.className = 'score';
-scoreDisplay.innerText = 'Score: 0';
-document.body.appendChild(scoreDisplay);
-
-const roundDisplay = document.createElement('div');
-roundDisplay.className = 'round';
-roundDisplay.innerText = 'Round: 1';
-document.body.appendChild(roundDisplay);
+let level = 1;
+const scoreDisplay = document.getElementById('score-display');
+const roundDisplay = document.getElementById('round-display');
+const levelProgress = document.getElementById('level-progress');
+const levelText = document.getElementById('level-text');
+const levelUpMessage = document.getElementById('level-up-message');
 
 // Oyuncu hareketleri
 document.addEventListener('keydown', (event) => {
@@ -85,6 +82,19 @@ function updateGame() {
       bullets.splice(i, 1);
       i--;
     }
+  }
+
+  // Level ilerlemesi ve kontrolü
+  const levelProgressWidth = (score % 100) / 100 * 100;
+  levelProgress.style.width = levelProgressWidth + '%';
+  levelText.innerText = 'Level ' + level;
+
+  if (levelProgressWidth === 0 && score > 0) {
+    level++;
+    levelUpMessage.innerText = 'Level Up!';
+    setTimeout(() => {
+      levelUpMessage.innerText = '';
+    }, 2000);
   }
 
   requestAnimationFrame(updateGame);
@@ -148,8 +158,11 @@ function resetGame() {
   bullets = [];
   score = 0;
   round = 1;
+  level = 1;
   scoreDisplay.innerText = 'Score: 0';
   roundDisplay.innerText = 'Round: 1';
+  levelProgress.style.width = '0%';
+  levelText.innerText = 'Level 1';
   createEnemies(round);
 }
 
