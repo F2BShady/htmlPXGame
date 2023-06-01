@@ -20,27 +20,23 @@ let playerX = 0;
 let playerY = 0;
 
 // Düşman pozisyonları
-let enemyPositions = [
-  { x: 5, y: 5, health: 1 },
-  { x: 10, y: 15, health: 2 },
-  { x: 17, y: 8, health: 3 }
-];
+let enemyPositions = [];
 
 // Mermi pozisyonları
 let bullets = [];
 
-// Puanlama ve seviye
+// Puanlama ve round
 let score = 0;
-let level = 1;
+let round = 1;
 const scoreDisplay = document.createElement('div');
 scoreDisplay.className = 'score';
 scoreDisplay.innerText = 'Score: 0';
 document.body.appendChild(scoreDisplay);
 
-const levelDisplay = document.createElement('div');
-levelDisplay.className = 'level';
-levelDisplay.innerText = 'Level: 1';
-document.body.appendChild(levelDisplay);
+const roundDisplay = document.createElement('div');
+roundDisplay.className = 'round';
+roundDisplay.innerText = 'Round: 1';
+document.body.appendChild(roundDisplay);
 
 // Oyuncu hareketleri
 document.addEventListener('keydown', (event) => {
@@ -74,7 +70,7 @@ function updateGame() {
     const enemy = enemyPositions[i];
     const enemyIndex = enemy.y * width + enemy.x;
     if (enemy.health > 0) {
-      pixels[enemyIndex].style.backgroundColor = '#00FF00';
+      pixels[enemyIndex].style.backgroundColor = enemy.color;
     }
   }
 
@@ -109,14 +105,13 @@ function checkAndDestroyEnemy() {
         score += 10; // Puan kazanma
         scoreDisplay.innerText = 'Score: ' + score;
 
-        // Tüm düşmanlar yok edildiyse bir sonraki seviyeye geç
+        // Tüm düşmanlar yok edildiyse bir sonraki rounda geç
         if (checkAllEnemiesDestroyed()) {
-          level++;
-          levelDisplay.innerText = 'Level: ' + level;
-          createEnemies(level);
+          round++;
+          roundDisplay.innerText = 'Round: ' + round;
+          createEnemies(round);
         }
       }
-      break;
     }
   }
 }
@@ -132,18 +127,51 @@ function checkAllEnemiesDestroyed() {
 }
 
 // Yeni düşmanlar oluşturma
-function createEnemies(level) {
+function createEnemies(round) {
   enemyPositions = [];
-  for (let i = 0; i < level + 2; i++) {
+  const enemyCount = round + 2;
+  for (let i = 0; i < enemyCount; i++) {
     const enemy = {
       x: Math.floor(Math.random() * width),
       y: Math.floor(Math.random() * height),
-      health: level
+      health: round,
+      color: getRandomEnemyColor()
     };
     enemyPositions.push(enemy);
   }
 }
 
+// Oyunu sıfırlama
+function resetGame() {
+  playerX = 0;
+  playerY = 0;
+  bullets = [];
+  score = 0;
+  round = 1;
+  scoreDisplay.innerText = 'Score: 0';
+  roundDisplay.innerText = 'Round: 1';
+  createEnemies(round);
+}
+
 // Oyunu başlatma
-createEnemies(level);
+createEnemies(round);
 updateGame();
+
+// Oyuncu ve düşman çarpışma kontrolü
+function checkCollision() {
+  for (let i = 0; i < enemyPositions.length; i++) {
+    const enemy = enemyPositions[i];
+    if (playerX === enemy.x && playerY === enemy.y && enemy.health > 0) {
+      alert('Oyun bitti! Yeniden başlatılıyor...');
+      resetGame();
+      break;
+    }
+  }
+}
+
+// Rastgele düşman rengi seçme
+function getRandomEnemyColor() {
+  const colors = ['#FF00FF', '#00FF00', '#00FFFF'];
+  const randomIndex = Math.floor(Math.random() * colors.length);
+  return colors[randomIndex];
+}
